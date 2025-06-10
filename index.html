@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <!-- Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="global.css">
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a56a88da53.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+            <!-- Toggle button for mobile view -->
+            <button class="navbar-toggler me-2 no-login-required" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation links -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item d-flex align-items-center ms-2 d-none d-lg-flex">
+                        <i class="fa-solid fa-keyboard fs-5 me-2"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transactions.html">All Transactions</a>
+                    </li>
+                    <li class="d-flex align-items-center nav-item">
+                        <a id="logout" class="nav-link no-login-required" href="#" style="display: none;">Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Authentication links -->
+            <div id="auth-area" class="d-flex align-items-center">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#signInModal"
+                    class="no-login-required auth-link fw-bold p-1 bg-danger text-white text-decoration-none me-2">SignIn</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#signUpModal"
+                    class="no-login-required auth-link fw-bold p-1 text-danger text-decoration-none">SignUp</a>
+            </div>
+        </nav>
+    </header>
+
+    <div id="alertContainer"></div>
+
+    <!-- Account List Section -->
+    <div class="container mt-3">
+        <div class="row">
+            <div class="p-3 card border border-3 rounded col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Account List</h4>
+                    <span id="account-type" class="text-muted"></span>
+                </div>
+                <div id="addList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Summary and Add Account Section -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Account Summary -->
+            <div class="p-3 border border-3 rounded col-12 col-md-6 mb-4">
+                <h4>Account Summary</h4>
+                <div class="summary-item">
+                    <span>Total Income</span>
+                    <span id="totalIncome">₹ 0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Total Expense</span>
+                    <span id="totalExpense">₹ 0</span>
+                </div>
+                <div class="summary-item border-top pt-2">
+                    <strong>Balance</strong>
+                    <strong id="balance">₹ 0</strong>
+                </div>
+            </div>
+
+            <div class="col-0 col-md-1"></div>
+
+            <!-- Add Account Form -->
+            <div class="p-3 border border-3 rounded col-12 col-md-5 mb-4">
+                <h4>Add Account</h4>
+                <form id="add-acc-form">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" maxlength="20" id="acc-name" required class="form-control mb-3" placeholder="Account Name">
+                        </div>
+                        <div class="col">
+                            <input type="number" max="99999999999999" id="acc-balance" required class="form-control mb-3" placeholder="Account Balance">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <select id="acc-type" required class="form-control" placeholder="Select">
+                                <option value="" disabled selected hidden>Account Type</option>
+                                <option value="Savings">Savings</option>
+                                <option value="Current">Current</option>
+                                <option value="Credit">Credit</option>
+                                <option value="Cash">Cash</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary form-control">Add Account</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Transaction and Recent Transactions Section -->
+    <div class="container">
+        <div class="row">
+            <!-- Add Transaction Form -->
+            <div class="p-3 border border-3 rounded col-12 col-md-6 mb-4">
+                <h4>Add Transaction</h4>
+                <form id="add-txn-form">
+                    <select required id="txn-type" class="form-control mb-3">
+                        <option value="" disabled selected hidden>Type</option>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                    <input required type="number" max="99999999999999" id="txn-amount" class="form-control mb-3" placeholder="Amount"/>
+                    <input required type="text" maxlength="20" id="txn-category" class="form-control mb-3" placeholder="Category"/>
+                    <input required type="date" id="txn-date" class="form-control mb-3" placeholder="Date"/>
+                    <button required type="submit" class="float-end btn btn-primary">ADD</button>
+                </form>
+            </div>
+
+            <div class="col-0 col-md-1"></div>
+
+            <!-- Recent Transactions Table -->
+            <div class="p-3 border border-3 rounded col-12 col-md-5 mb-4">
+                <h4>Recent Transactions</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="txn-table-body"></tbody>
+                </table>
+                <button class="btn btn-primary float-end" id="view-all-btn">View All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center p-1">
+        <p style="color: #ccc;">© 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+
+    <!-- SignUp Modal -->
+    <div class="modal fade" id="signUpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">SignUp</h5>
+                    <button type="button" class="no-login-required btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="signupError" class="alert alert-danger d-none" role="alert"></div>
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <input id="signupName" type="text" class="form-control" placeholder="Name" required />
+                        </div>
+                        <div class="mb-3">
+                            <input id="signupEmail" type="email" class="form-control" placeholder="Email" required />
+                        </div>
+                        <div class="mb-3">
+                            <input id="signupPassword" type="password" class="form-control" placeholder="Password" required />
+                        </div>
+                        <button type="submit" class="no-login-required btn btn-primary w-100">SignUp</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SignIn Modal -->
+    <div class="modal fade" id="signInModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">SignIn</h5>
+                    <button type="button" class="no-login-required btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <input id="loginEmail" type="email" class="form-control" placeholder="Email" required />
+                        </div>
+                        <div class="mb-3">
+                            <input id="loginPassword" type="password" class="form-control" placeholder="Password" required />
+                        </div>
+                        <button type="submit" class="no-login-required btn btn-primary w-100">SignIn</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS for modal functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="main.js"></script>
+</body>
+</html>

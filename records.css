@@ -1,0 +1,11 @@
+/* Ensure full height and flexible layout for HTML and body */
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content takes remaining space */
+main {
+    flex: 1;
+}

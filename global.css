@@ -1,0 +1,31 @@
+/* Navigation bar styling */
+nav {
+    background-color: whitesmoke;
+}
+
+/* Footer styling */
+footer {
+    width: 100%;
+    background-color: black;
+    text-align: center;
+}
+
+/* Summary box container */
+.summary-box {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Summary item layout */
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+/* Account type text styling */
+#account-type {
+    font-size: 0.9rem;
+}

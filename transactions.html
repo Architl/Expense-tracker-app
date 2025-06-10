@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transactions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="records.css" />
+    <script src="https://kit.fontawesome.com/a56a88da53.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+            <!-- Hamburger toggle button -->
+            <button class="navbar-toggler me-2 no-login-required" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item d-flex align-items-center ms-2 d-none d-lg-flex">
+                        <i class="fa-solid fa-keyboard fs-5 me-2"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transactions.html">Records</a>
+                    </li>
+                    <li class="d-flex align-items-center nav-item">
+                        <a id="logout" class="nav-link no-login-required" href="#" style="display: none;">Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Authentication links -->
+            <div id="auth-area" class="d-flex align-items-center">
+                <a href="index.html" data-bs-toggle="modal" data-bs-target="#signInModal"
+                    class="no-login-required auth-link fw-bold p-1 bg-danger text-white text-decoration-none me-2">SignIn</a>
+                <a href="index.html" data-bs-toggle="modal" data-bs-target="#signUpModal"
+                    class="no-login-required auth-link fw-bold p-1 text-danger text-decoration-none">SignUp</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container mt-4">
+            <h3 class="mb-4">All Transactions</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-txns-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center p-1">
+        <p style="color: #ccc;">© 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap and App Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check user authentication
+        const user = JSON.parse(localStorage.getItem("loggedInUser"));
+        const authArea = document.getElementById("auth-area");
+        const logoutBtn = document.getElementById("logout");
+
+        const fromIndex = localStorage.getItem("fromIndex");
+
+        if (!user && !fromIndex) {
+            alert("Please log in first.");
+            localStorage.setItem("fromIndex", "true");
+            window.location.href = "index.html";
+        } else if (!user) {
+            window.location.href = "index.html";
+        } else {
+            authArea.innerHTML = `<span class="fw-bold text-danger me-2">Welcome! ${user.name}</span>`;
+            logoutBtn.style.display = "inline-block";
+            localStorage.removeItem("fromIndex");
+        }
+
+        // Load and render transactions for selected account
+        const txnTableBody = document.getElementById("all-txns-body");
+        const key = `accounts_${user.email}`;
+        const accounts = JSON.parse(localStorage.getItem(key)) || [];
+        const selectedAccIndex = parseInt(localStorage.getItem(`selectedAccountIndex_${user.email}`));
+
+        if (accounts.length === 0) {
+            txnTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No accounts found</td></tr>`;
+        } else if (isNaN(selectedAccIndex) || !accounts[selectedAccIndex]) {
+            txnTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No selected account found</td></tr>`;
+        } else {
+            const selectedAccount = accounts[selectedAccIndex];
+            const txns = selectedAccount.transactions || [];
+
+            if (txns.length === 0) {
+                txnTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No transactions found</td></tr>`;
+            } else {
+                txns.forEach((txn, txnIndex) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${txn.txncategory}</td>
+                        <td>${txn.txntype}</td>
+                        <td>${txn.txndate}</td>
+                        <td class="fw-bold ${txn.txntype.toLowerCase() === 'income' ? 'text-success' : 'text-danger'}">
+                            ${txn.txntype.toLowerCase() === 'income' ? '+' : '-'} ₹${txn.txnamount}
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-delete" data-acc="${selectedAccIndex}" data-txn="${txnIndex}">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    `;
+                    txnTableBody.appendChild(row);
+                });
+            }
+        }
+
+        // Handle transaction deletion
+        txnTableBody.addEventListener("click", function (e) {
+            if (e.target.closest(".btn-delete")) {
+                const btn = e.target.closest(".btn-delete");
+                const accIndex = parseInt(btn.getAttribute("data-acc"));
+                const txnIndex = parseInt(btn.getAttribute("data-txn"));
+
+                const account = accounts[accIndex];
+                const txn = account.transactions[txnIndex];
+
+                if (confirm(`Delete transaction "${txn.txncategory}" of ₹${txn.txnamount}?`)) {
+                    let balance = parseFloat(account.accbalance) || 0;
+
+                    // Adjust balance
+                    if (txn.txntype.toLowerCase() === "income") {
+                        balance -= parseFloat(txn.txnamount);
+                    } else if (txn.txntype.toLowerCase() === "expense") {
+                        balance += parseFloat(txn.txnamount);
+                    }
+
+                    account.accbalance = balance.toFixed(2);
+
+                    // Delete transaction and update storage
+                    account.transactions.splice(txnIndex, 1);
+                    accounts[accIndex] = account;
+                    localStorage.setItem(key, JSON.stringify(accounts));
+
+                    // Reload to reflect changes
+                    location.reload();
+                }
+            }
+        });
+
+        // Handle logout
+        logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("loggedInUser");
+            localStorage.removeItem(`selectedAccountIndex_${user.email}`);
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+
+</html>
