@@ -366,6 +366,26 @@ function signIn(email, password) {
 // Handle user logout
 function logout() {
   localStorage.removeItem("loggedInUser");
+
+  // Clear summary section immediately
+  document.getElementById("totalIncome").textContent = `₹ 0.00`;
+  document.getElementById("totalExpense").textContent = `₹ 0.00`;
+  document.getElementById("balance").textContent = `₹ 0.00`;
+
+  // Also clear transaction table and account list
+  const txnTable = document.getElementById("txn-table-body");
+  if (txnTable)
+    txnTable.innerHTML = `<tr><td colspan="3" class="text-center">Please log in to view transactions!</td></tr>`;
+
+  const accountList = document.getElementById("addList");
+  if (accountList)
+    accountList.innerHTML = `<p>Please log in to view accounts!</p>`;
+
+  // Clear account type display
+  const accountTypeSpan = document.getElementById("account-type");
+  if (accountTypeSpan) accountTypeSpan.textContent = "";
+
+  // Show logout message
   alertContainer.innerHTML = `
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
       You have been logged out.
@@ -380,6 +400,8 @@ function logout() {
     }
   }, 2000);
 }
+
+
 
 // Check if user is logged in
 function isLoggedIn() {
