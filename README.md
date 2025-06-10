@@ -2,6 +2,10 @@
 
 This is a multi-user Expense Tracker web application built with **HTML**, **CSS**, and **Vanilla JavaScript**. Users can sign up, log in, create accounts, and track their income and expenses. All data is stored in **localStorage** for simplicity.
 
+## 🚀 Live Demo
+
+Check out the live app here: https://architl.github.io/Expense-tracker-app/
+
 ## 🚀 Features
 
 - 🔐 User Authentication (Signup & Login)
@@ -23,7 +27,7 @@ This is a multi-user Expense Tracker web application built with **HTML**, **CSS*
 
 📁 your-project-folder/
 ├── index.html
-├── records.html
+├── transactions.html
 ├── style.css
 ├── script.js
 └── README.md
@@ -36,5 +40,6 @@ This is a multi-user Expense Tracker web application built with **HTML**, **CSS*
 
 ## 📷 Preview
 
+![Expense-Tracker](https://github.com/user-attachments/assets/a253ac9f-b71c-4b6f-970f-f0f21c2ef835)
 
 Feel free to suggest any improvements or features!
