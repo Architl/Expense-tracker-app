@@ -28,7 +28,8 @@ Check out the live app here: https://architl.github.io/Expense-tracker-app/
 📁 your-project-folder/
 ├── index.html
 ├── transactions.html
-├── style.css
+├── global.css
+├── records.css
 ├── script.js
 └── README.md
 
